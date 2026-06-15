@@ -1,0 +1,233 @@
+{
+  "name": "recipe related",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        -32
+      ],
+      "id": "4db930ed-16f6-4fab-a546-268c59a8ca11",
+      "name": "When chat message received",
+      "webhookId": "4b8991b5-b940-464c-9152-3a567c368889"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "<AgentInstructions>\n<Role>\n<name>RecipeGeneraterAgent</name>\n<description>A helpful cooking assistant that generates custom recipe.</description>\n</Role>\n<Goal>\n<Primary>Provide a complete recipe including ingredients and step-by-step insructions based on the user's requested dish.</Primary>\n</Goal>\n<Instructions>\n<Instruction>Once you receive the user's dish name note them down carefully.</Instruction>\n<Instruction>Generate a list of ingredients with accurate quantities tailored to the specified serving size.</Instruction>\n<Instruction>Provide clear, step-by-step instructions on how to prepare the dish.</Instruction>\n<Instruction>Where applicable, include cooking times, tips, or variations to enhance the recipe</Instruction>\n</Instructions>\n</AgentInstructions>\n<Examples>\n    <Example>\n       <userInput>\n       Chilli Potato\n       </userInput>\n       <useroutput>\n      {\n  \"Recipe Name\": \"Chilli Potato\",\n  \"Description\": \"This Indo-Chinese classic features crispy fried potato fingers tossed in a spicy, tangy, and slightly sweet sauce with bell peppers and onions.\",\n  \"Ingredients\": \"3-4 medium-sized potatoes (about 500g), peeled and cut into fries/fingers (approx. 1/2 inch thick and 2-3 inches long); 3 tablespoons all-purpose flour (maida); 3 tablespoons cornflour (cornstarch); 1/2 teaspoon salt; 1/4 teaspoon black pepper (optional); Water (for boiling/blanching); Oil for deep frying; 2 tablespoons oil (preferably sesame oil or any vegetable oil); 1 tablespoon minced garlic; 1 tablespoon minced ginger; 2-3 green chilies, slit or finely chopped (adjust to your spice preference); 1 medium onion, diced or cut into petals; 1 medium bell pepper (capsicum), any color, diced or cut into squares; 2 tablespoons soy sauce (light or dark, adjust to taste); 1 tablespoon red chili sauce (like Sriracha or any Indo-Chinese chili sauce); 1 tablespoon tomato ketchup; 1 teaspoon white vinegar; 1/2 teaspoon sugar (optional, balances flavors); 1/2 teaspoon black pepper powder; 1/4 cup water or vegetable broth; 1 tablespoon cornflour mixed with 2 tablespoons water (cornflour slurry); Salt to taste (be careful as soy sauce is salty); 2 tablespoons spring onion greens, chopped; 1 teaspoon roasted sesame seeds.\",\n  \"Instructions\": \"1. Wash and cut the potatoes into fingers. Boil in salted water for 3-4 minutes until slightly tender. Drain and dry completely. 2. In a bowl, mix all-purpose flour, cornflour, salt, and pepper. Toss the potatoes in the flour mix until well coated. 3. Heat oil to 175-180°C and deep fry the coated potatoes in batches until golden and crispy (5-7 mins). Drain on paper towels. 4. In a wok, heat 2 tbsp oil. Sauté minced garlic, ginger, and green chilies for 30 seconds. Add onion and bell pepper, stir-fry for 2-3 minutes. 5. Add soy sauce, chili sauce, ketchup, vinegar, sugar, and black pepper. Stir well and cook for 1 minute. 6. Add 1/4 cup water or broth and simmer. Pour in the cornflour slurry while stirring continuously. Cook until the sauce thickens. 7. Add the fried potatoes and toss on high heat to coat evenly (30 seconds to 1 minute). 8. Garnish with chopped spring onion greens and sesame seeds. Serve hot.\",\n  \"Tips & Variations\": \"Serving Size: 2-3 people. Prep Time: 20 minutes. Cook Time: 25-30 minutes. Adjust green chilies and red chili sauce for desired spice level. For a healthier version, air-fry the potatoes at 200°C (400°F) for 15-20 minutes. You can add veggies like carrots or cabbage for extra crunch. For ultra-crispy potatoes, double-fry: once at a lower temp until light golden, then again at a higher temp until deep golden.\"\n}\n \n</useroutput>\n</Example>\n</Examples>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        48,
+        -32
+      ],
+      "id": "9d91c157-709b-4b0e-ac9d-3459ce8279c2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "=models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        16,
+        176
+      ],
+      "id": "7fcb6aab-ba89-41fd-84fd-1ed0c814fa53",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vL1kpOSdoreZXHkW",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app3Km9uXBF9yLl8A",
+          "mode": "list",
+          "cachedResultName": "recipe assistant",
+          "cachedResultUrl": "https://airtable.com/app3Km9uXBF9yLl8A"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblvuZTPSSGsZM9BL",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/app3Km9uXBF9yLl8A/tblvuZTPSSGsZM9BL"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Description": "={{ $json.output.Description }}",
+            "Ingredients": "={{ $json.output.Ingredients }}",
+            "Instructions": "={{ $json.output.Instructions }}",
+            "Tips": "={{ $json.output['Tips & Variations'] }}",
+            "Recipe Name": "={{ $json.output['Recipe Name'] }}"
+          },
+          "matchingColumns": [
+            "Recipe Details"
+          ],
+          "schema": [
+            {
+              "id": "Recipe Name",
+              "displayName": "Recipe Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ingredients",
+              "displayName": "Ingredients",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instructions",
+              "displayName": "Instructions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tips",
+              "displayName": "Tips",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        -32
+      ],
+      "id": "7687827e-a99d-47a4-99a9-f279a231a39c",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "b1KzAs7ywMk5XSRe",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"Recipe Name\": \"Chilli Potato\",\n  \"Description\": \"This Indo-Chinese classic features crispy fried potato fingers tossed in a spicy, tangy, and slightly sweet sauce with bell peppers and onions.\",\n  \"Ingredients\": \"3-4 medium-sized potatoes (about 500g), peeled and cut into fries/fingers (approx. 1/2 inch thick and 2-3 inches long); 3 tablespoons all-purpose flour (maida); 3 tablespoons cornflour (cornstarch); 1/2 teaspoon salt; 1/4 teaspoon black pepper (optional); Water (for boiling/blanching); Oil for deep frying; 2 tablespoons oil (preferably sesame oil or any vegetable oil); 1 tablespoon minced garlic; 1 tablespoon minced ginger; 2-3 green chilies, slit or finely chopped (adjust to your spice preference); 1 medium onion, diced or cut into petals; 1 medium bell pepper (capsicum), any color, diced or cut into squares; 2 tablespoons soy sauce (light or dark, adjust to taste); 1 tablespoon red chili sauce (like Sriracha or any Indo-Chinese chili sauce); 1 tablespoon tomato ketchup; 1 teaspoon white vinegar; 1/2 teaspoon sugar (optional, balances flavors); 1/2 teaspoon black pepper powder; 1/4 cup water or vegetable broth; 1 tablespoon cornflour mixed with 2 tablespoons water (cornflour slurry); Salt to taste (be careful as soy sauce is salty); 2 tablespoons spring onion greens, chopped; 1 teaspoon roasted sesame seeds.\",\n  \"Instructions\": \"1. Wash and cut the potatoes into fingers. Boil in salted water for 3-4 minutes until slightly tender. Drain and dry completely. 2. In a bowl, mix all-purpose flour, cornflour, salt, and pepper. Toss the potatoes in the flour mix until well coated. 3. Heat oil to 175-180°C and deep fry the coated potatoes in batches until golden and crispy (5-7 mins). Drain on paper towels. 4. In a wok, heat 2 tbsp oil. Sauté minced garlic, ginger, and green chilies for 30 seconds. Add onion and bell pepper, stir-fry for 2-3 minutes. 5. Add soy sauce, chili sauce, ketchup, vinegar, sugar, and black pepper. Stir well and cook for 1 minute. 6. Add 1/4 cup water or broth and simmer. Pour in the cornflour slurry while stirring continuously. Cook until the sauce thickens. 7. Add the fried potatoes and toss on high heat to coat evenly (30 seconds to 1 minute). 8. Garnish with chopped spring onion greens and sesame seeds. Serve hot.\",\n  \"Tips & Variations\": \"Serving Size: 2-3 people. Prep Time: 20 minutes. Cook Time: 25-30 minutes. Adjust green chilies and red chili sauce for desired spice level. For a healthier version, air-fry the potatoes at 200°C (400°F) for 15-20 minutes. You can add veggies like carrots or cabbage for extra crunch. For ultra-crispy potatoes, double-fry: once at a lower temp until light golden, then again at a higher temp until deep golden.\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        176
+      ],
+      "id": "85ad3366-e2b6-474a-b33e-325134f8f8e4",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6a8b287e-e3e9-4daf-906f-94c9031497ab",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e94e0c9c18fe9b6f1348affbf065a2a038fe24c7e672a45eab02685dce4e1f9"
+  },
+  "id": "Vjlo42tIdQIudPNd",
+  "tags": []
+}
